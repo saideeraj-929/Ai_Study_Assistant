@@ -82,13 +82,7 @@ python main.py
 ## 📸 Screenshots
 
 Add screenshots inside the **screenshots** folder.
-
-Example:
-
-* Home Screen
-* AI Response
-* Chat History
-
+![Ai response](https://github.com/saideeraj-929/Ai_Study_Assistant/blob/7fbe56ba945d5ef020d911b066b11409a022511d/AI_Study_Assistant%20screen%20shot.png)
 ---
 
 ## 🔒 Security
