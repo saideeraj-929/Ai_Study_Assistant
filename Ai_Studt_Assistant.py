@@ -80,14 +80,11 @@ def clear():
     response_box.delete("1.0", tk.END)
 
 def exit_app():
-    # Ask for confirmation before exiting
     answer = messagebox.askyesno("Exit", "Are you sure you want to exit?")
     if answer:
         window.destroy()
 
-# -------------------------------
-# ASK BUTTON
-# -------------------------------
+
 ask_button = tk.Button(
     window,
     text="Ask AI",
@@ -113,9 +110,6 @@ exit_button = tk.Button(window, text="Exit", command=exit_app,
                             bg="red", fg="white", font=("Arial", 12, "bold"))
 exit_button.pack(pady=50)
 
-# -------------------------------
-# RESPONSE LABEL
-# -------------------------------
 tk.Label(
     window,
     text="AI Response",
@@ -123,9 +117,7 @@ tk.Label(
     bg="#EAF4FF"
 ).pack()
 
-# -------------------------------
-# RESPONSE BOX
-# -------------------------------
+
 response_box = tk.Text(
     window,
     width=70,
@@ -135,7 +127,6 @@ response_box = tk.Text(
 )
 response_box.pack(pady=10)
 
-# -------------------------------
-# START PROGRAM
-# -------------------------------
+
+
 window.mainloop()
