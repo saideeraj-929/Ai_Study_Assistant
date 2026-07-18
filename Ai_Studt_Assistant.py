@@ -114,11 +114,16 @@ clear_button = tk.Button(
 )
 
 clear_button.pack(pady=5)
-save_button=tk.Button(window,text="Save Chat",command=save_chat,  bg="#4CAF50",
+save_button = tk.Button(
+    window,
+    text="Save Chat",
+    command=save_chat,
+    bg="#4CAF50",
     fg="white",
     width=20,
     font=("Arial", 11, "bold")
-                     )
+)
+
 save_button.pack(pady=5)
 exit_button = tk.Button(window, text="Exit", command=exit_app, 
                             bg="red", fg="white", font=("Arial", 12, "bold"))
