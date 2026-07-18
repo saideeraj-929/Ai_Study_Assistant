@@ -10,7 +10,7 @@ client = Groq(
 CHAT_AI="chat.txt"
 def save_chat():
     chat = response_box.get("1.0",tk.END)
-    with open("CHAT_AI") as file:
+    with open("CHAT_AI","w") as file:
         file.write(chat)
      messagebox.showinfo(
         "Success",
@@ -23,7 +23,7 @@ def ask_ai():
         response_box.delete("1.0", tk.END)
         response_box.insert(tk.END, "Please enter a question.")
         return
-    save_chat
+    
     response_box.insert(tk.END, "\nThinking...\n")
     window.update()
 
