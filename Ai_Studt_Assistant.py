@@ -7,7 +7,15 @@ client = Groq(
 
 )
 
-
+CHAT_AI="chat.txt"
+def save_chat():
+    chat = response_box.get("1.0",tk.END)
+    with open("CHAT_AI") as file:
+        file.write(chat)
+     messagebox.showinfo(
+        "Success",
+        "Chat saved successfully!"
+    )
 def ask_ai():
     question = question_entry.get("1.0", tk.END).strip()
 
@@ -15,7 +23,7 @@ def ask_ai():
         response_box.delete("1.0", tk.END)
         response_box.insert(tk.END, "Please enter a question.")
         return
-
+    save_chat
     response_box.insert(tk.END, "\nThinking...\n")
     window.update()
 
@@ -79,6 +87,7 @@ question_entry.pack(pady=10)
 def clear():
     response_box.delete("1.0", tk.END)
 
+
 def exit_app():
     answer = messagebox.askyesno("Exit", "Are you sure you want to exit?")
     if answer:
@@ -106,6 +115,11 @@ clear_button = tk.Button(
 )
 
 clear_button.pack(pady=5)
+save_button=tk.Button(window,text="Save Chat",command=save_chat,    bg="#F44336",
+    fg="white",
+    width=20,
+    font=("Arial", 11, "bold")
+save_button.pack(pady=5)
 exit_button = tk.Button(window, text="Exit", command=exit_app, 
                             bg="red", fg="white", font=("Arial", 12, "bold"))
 exit_button.pack(pady=50)
