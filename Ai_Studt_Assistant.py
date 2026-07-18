@@ -7,12 +7,12 @@ client = Groq(
 
 )
 
-CHAT_AI="chat.txt"
+CHAT_FILE="chat.txt"
 def save_chat():
     chat = response_box.get("1.0",tk.END)
-    with open("CHAT_AI","w") as file:
+    with open("CHAT_FILE","w") as file:
         file.write(chat)
-     messagebox.showinfo(
+    messagebox.showinfo(
         "Success",
         "Chat saved successfully!"
     )
@@ -51,8 +51,7 @@ def ask_ai():
     except Exception as e:
         response_box.delete("1.0", tk.END)
         response_box.insert(tk.END, f"Error:\n\n{e}")
-def clear():
-    response_box.delete("1.0", tk.END)
+
 
 window = tk.Tk()
 window.title("🤖 AI Study Assistant")
@@ -115,7 +114,7 @@ clear_button = tk.Button(
 )
 
 clear_button.pack(pady=5)
-save_button=tk.Button(window,text="Save Chat",command=save_chat,    bg="#F44336",
+save_button=tk.Button(window,text="Save Chat",command=save_chat,  bg="#4CAF50",
     fg="white",
     width=20,
     font=("Arial", 11, "bold")
