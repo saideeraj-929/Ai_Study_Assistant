@@ -14,8 +14,19 @@ def save_chat():
         file.write(chat)
     messagebox.showinfo(
         "Success",
+        "Chat loaded successfully!"
+    )
+def load():
+    with open(CHAT_FILE,"r")as file:
+        data=file.read(chat)
+    response_box.delete("1.0", tk.END)
+    response_box.insert(tk.END, data)
+    messagebox.showinfo(
+        "Success",
         "Chat saved successfully!"
     )
+    except FileNotFoundError:
+        messagebox.showerror("Error", "No saved chat found.")
 def ask_ai():
     question = question_entry.get("1.0", tk.END).strip()
 
@@ -125,6 +136,17 @@ save_button = tk.Button(
 )
 
 save_button.pack(pady=5)
+load_button = tk.Button(
+    window,
+    text="Load Chat",
+    command=load,
+    bg="#FFC107",
+    fg="black",
+    width=20,
+    font=("Arial", 11, "bold")
+)
+load_button.pack(pady=5)
+
 exit_button = tk.Button(window, text="Exit", command=exit_app, 
                             bg="red", fg="white", font=("Arial", 12, "bold"))
 exit_button.pack(pady=50)
@@ -146,6 +168,6 @@ response_box = tk.Text(
 )
 response_box.pack(pady=10)
 
-
+load()
 
 window.mainloop()
