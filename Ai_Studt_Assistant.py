@@ -17,7 +17,7 @@ def save_chat():
         "Chat saved successfully!"
     )
 def load_chat():
-    try
+    try:
         with open(CHAT_FILE,"r")as file:
             data=file.read()
         response_box.delete("1.0", tk.END)
@@ -26,7 +26,7 @@ def load_chat():
         "Success",
         "Chat loaded successfully!"
     )
-   except FileNotFoundError:
+    except FileNotFoundError:
         messagebox.showerror("Error", "No saved chat found.")
 def ask_ai():
     question = question_entry.get("1.0", tk.END).strip()
