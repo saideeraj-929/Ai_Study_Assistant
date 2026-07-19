@@ -6,7 +6,7 @@ client = Groq(
     api_key=os.getenv("GROQ_API_KEY")
 
 )
-
+messages=[]
 CHAT_FILE="chat.txt"
 def save_chat():
     chat = response_box.get("1.0",tk.END)
@@ -36,29 +36,38 @@ def ask_ai():
         response_box.insert(tk.END, "Please enter a question.")
         return
     
-    response_box.insert(tk.END, "\nThinking...\n")
+  
     window.update()
-
-    
-
-    try:
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
+    messages.append(
                 {
                     "role": "user",
                     "content": question
                 }
-            ]
-        )
+    )
+    
 
+    try:
+        response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=messages
+)
         answer = response.choices[0].message.content
+        
+        
+        messages.append(
+    {
+        "role": "assistant",
+        "content": answer
+    }
+)
+        
         response_box.insert(tk.END, "\n")
         response_box.insert(tk.END, "You: " + question + "\n\n")
         response_box.insert(tk.END, "AI: " + answer)
         response_box.insert(tk.END, "\n")
         response_box.insert(tk.END, "-" * 60)
         response_box.insert(tk.END, "\n\n")
+        question_entry.delete("1.0", tk.END)
 
     except Exception as e:
         response_box.delete("1.0", tk.END)
