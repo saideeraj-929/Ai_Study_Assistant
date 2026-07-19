@@ -81,7 +81,6 @@ python main.py
 
 ## 📸 Screenshots
 
-Add screenshots inside the **screenshots** folder.
 ![Ai response](https://github.com/saideeraj-929/Ai_Study_Assistant/blob/e2bfb42d7692dab393b605b820ad681ee282231e/Ai%20assistant%20version%202.0.png)
 ---
 
