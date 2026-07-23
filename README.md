@@ -109,7 +109,7 @@ os.getenv("GROQ_API_KEY")
 * Markdown Support
 * File Upload
 * Image Analysis
-
+* Conversation History
 ---
 
 ## 👨‍💻 Author
