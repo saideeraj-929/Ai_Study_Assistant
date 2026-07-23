@@ -88,14 +88,14 @@ title = tk.Label(
 )
 title.pack(pady=10)
 
-
-tk.Label(
+question_label = tk.Label(
     window,
     text="Ask your question",
     font=("Arial", 12, "bold"),
     bg="#EAF4FF"
-).pack()
+)
 
+question_label.pack()
 
 question_entry = tk.Text(
     window,
