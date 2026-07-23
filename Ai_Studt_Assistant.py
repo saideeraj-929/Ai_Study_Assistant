@@ -79,7 +79,7 @@ window.title("🤖 AI Study Assistant")
 window.geometry("700x600")
 window.config(bg="#EAF4FF")
 
-
+dark_mode =False
 title = tk.Label(
     window,
     text="🤖 AI Study Assistant",
@@ -113,7 +113,22 @@ def exit_app():
     if answer:
         window.destroy()
 
+def toggle_theme():
+    global dark_mode
 
+    if dark_mode == False:
+        dark_mode = True
+
+        window.config(bg="#2C2C2C")
+        title.config(bg="#2C2C2C", fg="white")
+        theme_button.config(text="☀ Light Mode")
+
+    else:
+        dark_mode = False
+
+        window.config(bg="#EAF4FF")
+        title.config(bg="#EAF4FF", fg="black")
+        theme_button.config(text="🌙 Dark Mode")
 ask_button = tk.Button(
     window,
     text="Ask AI",
@@ -167,7 +182,16 @@ tk.Label(
     font=("Arial", 12, "bold"),
     bg="#EAF4FF"
 ).pack()
+theme_button = tk.Button(
+    window,
+    text="🌙 Dark Mode",
+    command=toggle_theme,
+    bg="#555555",
+    fg="white",
+    width=15
+)
 
+theme_button.pack(pady=5)
 
 response_box = tk.Text(
     window,
