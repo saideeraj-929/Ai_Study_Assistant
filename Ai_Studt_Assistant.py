@@ -120,15 +120,71 @@ def toggle_theme():
         dark_mode = True
 
         window.config(bg="#2C2C2C")
+
         title.config(bg="#2C2C2C", fg="white")
-        theme_button.config(text="☀ Light Mode")
+        question_label.config(bg="#2C2C2C", fg="white")
+        response_label.config(bg="#2C2C2C", fg="white")
+
+        question_entry.config(
+            bg="#3C3F41",
+            fg="white",
+            insertbackground="white"
+        )
+
+        response_box.config(
+            bg="#3C3F41",
+            fg="white",
+            insertbackground="white"
+        )
+
+        
+        ask_button.config(bg="#1565C0")
+        clear_button.config(bg="#C62828")
+        save_button.config(bg="#2E7D32")
+        load_button.config(bg="#F9A825", fg="black")
+        exit_button.config(bg="#B71C1C")
+
+       
+        theme_button.config(
+            text="☀ Light Mode",
+            bg="#757575"
+        )
 
     else:
         dark_mode = False
 
+        
         window.config(bg="#EAF4FF")
+
+      
         title.config(bg="#EAF4FF", fg="black")
-        theme_button.config(text="🌙 Dark Mode")
+        question_label.config(bg="#EAF4FF", fg="black")
+        response_label.config(bg="#EAF4FF", fg="black")
+
+        question_entry.config(
+            bg="white",
+            fg="black",
+            insertbackground="black"
+        )
+
+        response_box.config(
+            bg="white",
+            fg="black",
+            insertbackground="black"
+        )
+
+       
+        ask_button.config(bg="#2196F3")
+        clear_button.config(bg="#F44336")
+        save_button.config(bg="#4CAF50")
+        load_button.config(bg="#FFC107", fg="black")
+        exit_button.config(bg="red")
+
+       
+        theme_button.config(
+            text="🌙 Dark Mode",
+            bg="#555555"
+        )
 ask_button = tk.Button(
     window,
     text="Ask AI",
@@ -176,12 +232,14 @@ exit_button = tk.Button(window, text="Exit", command=exit_app,
                             bg="red", fg="white", font=("Arial", 12, "bold"))
 exit_button.pack(pady=50)
 
-tk.Label(
+response_label = tk.Label(
     window,
     text="AI Response",
     font=("Arial", 12, "bold"),
     bg="#EAF4FF"
-).pack()
+)
+
+response_label.pack()
 theme_button = tk.Button(
     window,
     text="🌙 Dark Mode",
