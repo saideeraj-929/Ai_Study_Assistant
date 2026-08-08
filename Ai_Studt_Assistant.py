@@ -260,6 +260,6 @@ response_box = tk.Text(
 )
 response_box.pack(pady=10)
 
-load_chat()
+
 
 window.mainloop()
