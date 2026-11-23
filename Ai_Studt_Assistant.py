@@ -1,33 +1,53 @@
+
 import tkinter as tk
 from tkinter import messagebox
 import os
-from groq import Groq
-client = Groq(
-    api_key=os.getenv("GROQ_API_KEY")
+from google import genai
 
+
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
 )
-messages=[]
-CHAT_FILE="chat.txt"
+
+messages = []
+CHAT_FILE = "chat.txt"
+
+
+
 def save_chat():
-    chat = response_box.get("1.0",tk.END)
-    with open(CHAT_FILE,"w") as file:
+    chat = response_box.get("1.0", tk.END)
+
+    with open(CHAT_FILE, "w", encoding="utf-8") as file:
         file.write(chat)
+
     messagebox.showinfo(
         "Success",
         "Chat saved successfully!"
     )
+
+
+
 def load_chat():
     try:
-        with open(CHAT_FILE,"r")as file:
-            data=file.read()
+        with open(CHAT_FILE, "r", encoding="utf-8") as file:
+            data = file.read()
+
         response_box.delete("1.0", tk.END)
         response_box.insert(tk.END, data)
+
         messagebox.showinfo(
-        "Success",
-        "Chat loaded successfully!"
-    )
+            "Success",
+            "Chat loaded successfully!"
+        )
+
     except FileNotFoundError:
-        messagebox.showerror("Error", "No saved chat found.")
+        messagebox.showerror(
+            "Error",
+            "No saved chat found."
+        )
+
+
+
 def ask_ai():
     question = question_entry.get("1.0", tk.END).strip()
 
@@ -35,58 +55,89 @@ def ask_ai():
         response_box.delete("1.0", tk.END)
         response_box.insert(tk.END, "Please enter a question.")
         return
-    
-  
+
+    if not os.getenv("GEMINI_API_KEY"):
+        messagebox.showerror(
+            "API Error",
+            "Gemini API key not found!"
+        )
+        return
+
     window.update()
-    messages.append(
-                {
-                    "role": "user",
-                    "content": question
-                }
-    )
-    
+
+    messages.append({
+        "role": "user",
+        "content": question
+    })
 
     try:
-        response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=messages
-)
-        answer = response.choices[0].message.content
         
+        gemini_history = [
+            {
+                "role": "user" if msg["role"] == "user" else "model",
+                "parts": [{"text": msg["content"]}]
+            }
+            for msg in messages
+        ]
+
         
-        messages.append(
-    {
-        "role": "assistant",
-        "content": answer
-    }
-)
-        
-        response_box.insert(tk.END, "\n")
-        response_box.insert(tk.END, "You: " + question + "\n\n")
-        response_box.insert(tk.END, "AI: " + answer)
-        response_box.insert(tk.END, "\n")
-        response_box.insert(tk.END, "-" * 60)
-        response_box.insert(tk.END, "\n\n")
+        response = client.models.generate_content(
+            model="gemini-3.5-flash-lite",
+            contents=gemini_history
+        )
+
+        answer = response.text
+
+        messages.append({
+            "role": "assistant",
+            "content": answer
+        })
+
+        response_box.insert(
+            tk.END,
+            "\nYou: " + question + "\n\n"
+        )
+
+        response_box.insert(
+            tk.END,
+            "AI: " + answer + "\n"
+        )
+
+        response_box.insert(
+            tk.END,
+            "-" * 60 + "\n\n"
+        )
+
         question_entry.delete("1.0", tk.END)
 
     except Exception as e:
-        response_box.delete("1.0", tk.END)
-        response_box.insert(tk.END, f"Error:\n\n{e}")
+    
+        messages.pop()
+
+        response_box.insert(
+            tk.END,
+            f"\nError:\n\n{e}\n"
+        )
+
 
 
 window = tk.Tk()
-window.title("🤖 AI Study Assistant")
+window.title("AI Study Assistant")
 window.geometry("700x600")
 window.config(bg="#EAF4FF")
 
-dark_mode =False
+dark_mode = False
+
+
+
 title = tk.Label(
     window,
-    text="🤖 AI Study Assistant",
+    text="AI Study Assistant",
     font=("Arial", 18, "bold"),
     bg="#EAF4FF"
 )
 title.pack(pady=10)
+
 
 question_label = tk.Label(
     window,
@@ -94,8 +145,8 @@ question_label = tk.Label(
     font=("Arial", 12, "bold"),
     bg="#EAF4FF"
 )
-
 question_label.pack()
+
 
 question_entry = tk.Text(
     window,
@@ -104,14 +155,25 @@ question_entry = tk.Text(
     font=("Arial", 11)
 )
 question_entry.pack(pady=10)
+
+
+
 def clear():
     response_box.delete("1.0", tk.END)
+    messages.clear()
+
 
 
 def exit_app():
-    answer = messagebox.askyesno("Exit", "Are you sure you want to exit?")
+    answer = messagebox.askyesno(
+        "Exit",
+        "Are you sure you want to exit?"
+    )
+
     if answer:
         window.destroy()
+
+
 
 def toggle_theme():
     global dark_mode
@@ -137,26 +199,22 @@ def toggle_theme():
             insertbackground="white"
         )
 
-        
         ask_button.config(bg="#1565C0")
         clear_button.config(bg="#C62828")
         save_button.config(bg="#2E7D32")
         load_button.config(bg="#F9A825", fg="black")
         exit_button.config(bg="#B71C1C")
 
-       
         theme_button.config(
-            text="☀ Light Mode",
+            text="Light Mode",
             bg="#757575"
         )
 
     else:
         dark_mode = False
 
-        
         window.config(bg="#EAF4FF")
 
-      
         title.config(bg="#EAF4FF", fg="black")
         question_label.config(bg="#EAF4FF", fg="black")
         response_label.config(bg="#EAF4FF", fg="black")
@@ -173,18 +231,18 @@ def toggle_theme():
             insertbackground="black"
         )
 
-       
         ask_button.config(bg="#2196F3")
         clear_button.config(bg="#F44336")
         save_button.config(bg="#4CAF50")
         load_button.config(bg="#FFC107", fg="black")
         exit_button.config(bg="red")
 
-       
         theme_button.config(
-            text="🌙 Dark Mode",
+            text="Dark Mode",
             bg="#555555"
         )
+
+
 ask_button = tk.Button(
     window,
     text="Ask AI",
@@ -195,6 +253,8 @@ ask_button = tk.Button(
     font=("Arial", 11, "bold")
 )
 ask_button.pack(pady=10)
+
+
 clear_button = tk.Button(
     window,
     text="Clear Chat",
@@ -204,8 +264,9 @@ clear_button = tk.Button(
     width=20,
     font=("Arial", 11, "bold")
 )
-
 clear_button.pack(pady=5)
+
+
 save_button = tk.Button(
     window,
     text="Save Chat",
@@ -215,8 +276,10 @@ save_button = tk.Button(
     width=20,
     font=("Arial", 11, "bold")
 )
-
 save_button.pack(pady=5)
+
+
+
 load_button = tk.Button(
     window,
     text="Load Chat",
@@ -228,9 +291,19 @@ load_button = tk.Button(
 )
 load_button.pack(pady=5)
 
-exit_button = tk.Button(window, text="Exit", command=exit_app, 
-                            bg="red", fg="white", font=("Arial", 12, "bold"))
+
+
+exit_button = tk.Button(
+    window,
+    text="Exit",
+    command=exit_app,
+    bg="red",
+    fg="white",
+    font=("Arial", 12, "bold")
+)
 exit_button.pack(pady=50)
+
+
 
 response_label = tk.Label(
     window,
@@ -238,18 +311,21 @@ response_label = tk.Label(
     font=("Arial", 12, "bold"),
     bg="#EAF4FF"
 )
-
 response_label.pack()
+
+
+
 theme_button = tk.Button(
     window,
-    text="🌙 Dark Mode",
+    text="Dark Mode",
     command=toggle_theme,
     bg="#555555",
     fg="white",
     width=15
 )
-
 theme_button.pack(pady=5)
+
+
 
 response_box = tk.Text(
     window,
@@ -260,6 +336,5 @@ response_box = tk.Text(
 )
 response_box.pack(pady=10)
 
-
-
 window.mainloop()
+
