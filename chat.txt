@@ -1,0 +1,14 @@
+
+You: hi
+
+AI: Hello. How can I help you today?
+------------------------------------------------------------
+
+
+
+You: wow
+
+AI: That's quite a reaction. Is everything okay? Want to talk about what's on your mind?
+------------------------------------------------------------
+
+

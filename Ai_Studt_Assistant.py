@@ -5,6 +5,7 @@ import os
 from google import genai
 
 
+
 client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
@@ -13,11 +14,16 @@ messages = []
 CHAT_FILE = "chat.txt"
 
 
-
 def save_chat():
     chat = response_box.get("1.0", tk.END)
 
     with open(CHAT_FILE, "w", encoding="utf-8") as file:
+        file.write(chat)
+
+
+def save_chat():
+    chat = response_box.get("1.0", tk.END)
+    with open(CHAT_FILE, "w") as file:
         file.write(chat)
 
     messagebox.showinfo(
@@ -27,11 +33,11 @@ def save_chat():
 
 
 
+
 def load_chat():
     try:
-        with open(CHAT_FILE, "r", encoding="utf-8") as file:
+        with open(CHAT_FILE, "r") as file:
             data = file.read()
-
         response_box.delete("1.0", tk.END)
         response_box.insert(tk.END, data)
 
@@ -40,6 +46,7 @@ def load_chat():
             "Chat loaded successfully!"
         )
 
+
     except FileNotFoundError:
         messagebox.showerror(
             "Error",
@@ -47,23 +54,21 @@ def load_chat():
         )
 
 
+    except FileNotFoundError:
+        messagebox.showerror("Error", "No saved chat found.")
+
+
 
 def ask_ai():
     question = question_entry.get("1.0", tk.END).strip()
 
     if question == "":
-        response_box.delete("1.0", tk.END)
-        response_box.insert(tk.END, "Please enter a question.")
+        response_box.insert(tk.END, "Please enter a question.\n")
         return
 
     if not os.getenv("GEMINI_API_KEY"):
-        messagebox.showerror(
-            "API Error",
-            "Gemini API key not found!"
-        )
+        messagebox.showerror("API Error", "Gemini API key not found!")
         return
-
-    window.update()
 
     messages.append({
         "role": "user",
@@ -71,7 +76,6 @@ def ask_ai():
     })
 
     try:
-        
         gemini_history = [
             {
                 "role": "user" if msg["role"] == "user" else "model",
@@ -80,13 +84,66 @@ def ask_ai():
             for msg in messages
         ]
 
-        
         response = client.models.generate_content(
             model="gemini-3.5-flash-lite",
             contents=gemini_history
         )
 
         answer = response.text
+
+        messages.append({
+            "role": "assistant",
+            "content": answer
+        })
+
+        response_box.insert(
+            tk.END,
+            "\nYou: " + question + "\n\n"
+        )
+
+        response_box.insert(
+            tk.END,
+            "AI: " + answer + "\n"
+        )
+
+        response_box.insert(
+            tk.END,
+            "-" * 60 + "\n\n"
+        )
+
+        question_entry.delete("1.0", tk.END)
+
+    except Exception as e:
+        messages.pop()
+        response_box.insert(
+            tk.END,
+            f"\nError:\n{e}\n"
+        )
+
+
+    window.update()
+    messages.append(
+        {
+            "role": "user",
+            "content": question
+        }
+    )
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-3.5-flash-lite",
+            contents=[
+                {
+                    "role": "user" if msg["role"] == "user" else "model",
+                    "parts": [{"text": msg["content"]}]
+                }
+                for msg in messages
+            ]
+
+        )
+
+        answer = response.text
+
 
         messages.append({
             "role": "assistant",
@@ -120,6 +177,26 @@ def ask_ai():
         )
 
 
+        messages.append(
+            {
+                "role": "assistant",
+                "content": answer
+            }
+        )
+
+        response_box.insert(tk.END, "\n")
+        response_box.insert(tk.END, "You: " + question + "\n\n")
+        response_box.insert(tk.END, "AI: " + answer)
+        response_box.insert(tk.END, "\n")
+        response_box.insert(tk.END, "-" * 60)
+        response_box.insert(tk.END, "\n\n")
+        question_entry.delete("1.0", tk.END)
+
+    except Exception as e:
+        response_box.delete("1.0", tk.END)
+        response_box.insert(tk.END, f"Error:\n\n{e}")
+
+
 
 window = tk.Tk()
 window.title("AI Study Assistant")
@@ -127,6 +204,9 @@ window.geometry("700x600")
 window.config(bg="#EAF4FF")
 
 dark_mode = False
+
+
+
 
 
 
@@ -139,14 +219,19 @@ title = tk.Label(
 title.pack(pady=10)
 
 
+
+
 question_label = tk.Label(
     window,
     text="Ask your question",
     font=("Arial", 12, "bold"),
     bg="#EAF4FF"
 )
+
 question_label.pack()
 
+
+question_label.pack()
 
 question_entry = tk.Text(
     window,
@@ -157,18 +242,22 @@ question_entry = tk.Text(
 question_entry.pack(pady=10)
 
 
-
 def clear():
     response_box.delete("1.0", tk.END)
     messages.clear()
 
 
 
+
 def exit_app():
+
     answer = messagebox.askyesno(
         "Exit",
         "Are you sure you want to exit?"
     )
+
+
+    answer = messagebox.askyesno("Exit", "Are you sure you want to exit?")
 
     if answer:
         window.destroy()
@@ -182,6 +271,7 @@ def toggle_theme():
         dark_mode = True
 
         window.config(bg="#2C2C2C")
+
 
         title.config(bg="#2C2C2C", fg="white")
         question_label.config(bg="#2C2C2C", fg="white")
@@ -210,10 +300,15 @@ def toggle_theme():
             bg="#757575"
         )
 
+        title.config(bg="#2C2C2C", fg="white")
+        theme_button.config(text="☀ Light Mode")
+
+
     else:
         dark_mode = False
 
         window.config(bg="#EAF4FF")
+
 
         title.config(bg="#EAF4FF", fg="black")
         question_label.config(bg="#EAF4FF", fg="black")
@@ -242,6 +337,10 @@ def toggle_theme():
             bg="#555555"
         )
 
+        title.config(bg="#EAF4FF", fg="black")
+        theme_button.config(text="🌙 Dark Mode")
+
+
 
 ask_button = tk.Button(
     window,
@@ -267,6 +366,7 @@ clear_button = tk.Button(
 clear_button.pack(pady=5)
 
 
+
 save_button = tk.Button(
     window,
     text="Save Chat",
@@ -276,8 +376,14 @@ save_button = tk.Button(
     width=20,
     font=("Arial", 11, "bold")
 )
+
 save_button.pack(pady=5)
 
+
+
+
+
+save_button.pack(pady=5)
 
 
 load_button = tk.Button(
@@ -292,7 +398,6 @@ load_button = tk.Button(
 load_button.pack(pady=5)
 
 
-
 exit_button = tk.Button(
     window,
     text="Exit",
@@ -305,26 +410,41 @@ exit_button.pack(pady=50)
 
 
 
+
+
 response_label = tk.Label(
     window,
     text="AI Response",
     font=("Arial", 12, "bold"),
     bg="#EAF4FF"
 )
+
 response_label.pack()
 
 
 
 theme_button = tk.Button(
     window,
-    text="Dark Mode",
+    text="Dark Mode",)
+
+response_label.pack()
+
+theme_button = tk.Button(
+    window,
+    text="🌙 Dark Mode",
+
     command=toggle_theme,
     bg="#555555",
     fg="white",
     width=15
 )
+
 theme_button.pack(pady=5)
 
+
+
+
+theme_button.pack(pady=5)
 
 
 response_box = tk.Text(
@@ -335,6 +455,11 @@ response_box = tk.Text(
     wrap="word"
 )
 response_box.pack(pady=10)
+
+
+
+load_chat()
+
 
 window.mainloop()
 
